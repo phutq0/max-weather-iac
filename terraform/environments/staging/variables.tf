@@ -1,0 +1,9 @@
+variable "project_name" { type = string }
+variable "region" { type = string }
+variable "vpc_cidr" { type = string }
+variable "eks_cluster_version" { type = string }
+variable "node_instance_types" { type = list(string) }
+variable "api_gateway_stage_name" { type = string }
+variable "cloudwatch_retention_days" { type = number }
+variable "enable_nat_gateway" { type = bool }
+

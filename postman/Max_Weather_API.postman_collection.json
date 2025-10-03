@@ -1,0 +1,212 @@
+{
+  "info": {
+    "name": "Max Weather API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "d6e7b3e6-0000-4000-8000-aaaaaaaaaaaa"
+  },
+  "item": [
+    {
+      "name": "OAuth2",
+      "item": [
+        {
+          "name": "Get Access Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.environment.set('access_token', json.access_token);",
+                  "pm.environment.set('refresh_token', json.refresh_token);",
+                  "pm.environment.set('token_expiry', Date.now() + (json.expires_in - 30) * 1000);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+            ],
+            "url": {
+              "raw": "{{oauth_token_url}}",
+              "host": ["{{oauth_token_url}}"]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type", "value": "client_credentials" },
+                { "key": "client_id", "value": "{{client_id}}" },
+                { "key": "client_secret", "value": "{{client_secret}}" },
+                { "key": "scope", "value": "weather.read" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.environment.set('access_token', json.access_token);",
+                  "pm.environment.set('token_expiry', Date.now() + (json.expires_in - 30) * 1000);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+            ],
+            "url": {
+              "raw": "{{oauth_token_url}}",
+              "host": ["{{oauth_token_url}}"]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type", "value": "refresh_token" },
+                { "key": "client_id", "value": "{{client_id}}" },
+                { "key": "client_secret", "value": "{{client_secret}}" },
+                { "key": "refresh_token", "value": "{{refresh_token}}" }
+              ]
+            }
+          }
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get('token_expiry') && Date.now() > Number(pm.environment.get('token_expiry'))) {",
+              "  postman.setNextRequest('Refresh Token');",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Weather API",
+      "item": [
+        {
+          "name": "Current by City",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-api-key", "value": "{{api_key}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/current?city={{city}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "current"],
+              "query": [{ "key": "city", "value": "{{city}}" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time < 1000ms', function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test('Content-Type', function () { pm.response.to.have.header('Content-Type'); });",
+                  "var schema = { type: 'object' };",
+                  "pm.test('Schema valid', function () { pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Forecast by City",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-api-key", "value": "{{api_key}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/forecast?city={{city}}&days=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                { "key": "city", "value": "{{city}}" },
+                { "key": "days", "value": "5" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time < 1000ms', function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test('Content-Type', function () { pm.response.to.have.header('Content-Type'); });",
+                  "var schema = { type: 'object' };",
+                  "pm.test('Schema valid', function () { pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "By Location",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "x-api-key", "value": "{{api_key}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/location/{{latitude}}/{{longitude}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "location", "{{latitude}}", "{{longitude}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response time < 1000ms', function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
+                  "pm.test('Content-Type', function () { pm.response.to.have.header('Content-Type'); });",
+                  "var schema = { type: 'object' };",
+                  "pm.test('Schema valid', function () { pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "https://staging.example.com" },
+    { "key": "api_key", "value": "" },
+    { "key": "access_token", "value": "" },
+    { "key": "oauth_token_url", "value": "https://issuer.example.com/oauth/token" },
+    { "key": "client_id", "value": "" },
+    { "key": "client_secret", "value": "" },
+    { "key": "city", "value": "Singapore" },
+    { "key": "latitude", "value": "1.3521" },
+    { "key": "longitude", "value": "103.8198" }
+  ]
+}
+
