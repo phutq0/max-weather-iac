@@ -1,7 +1,7 @@
-### Max Weather - System Architecture
+### Max Weather - System Architecture (Simplified)
 
 #### Overview
-The system provides a weather API backed by AWS infrastructure with Terraform-managed IaC, EKS for compute, API Gateway for edge, and observability via CloudWatch and Fluent Bit.
+The system provides a minimal weather API proxy/mock backed by AWS infrastructure with Terraform-managed IaC, EKS for compute, API Gateway for edge, and observability via CloudWatch. The application demonstrates infrastructure capabilities without complex backend logic.
 
 #### ASCII Architecture Diagram
 ```
@@ -50,17 +50,18 @@ Users
 #### Components
 - VPC: 3 public + 3 private subnets across AZs, IGW, NAT, endpoints (S3/ECR/Logs).
 - EKS: v1.29 control plane, managed node groups, OIDC for IRSA, addons (CoreDNS, kube-proxy, EBS CSI).
-- Ingress: nginx-ingress on NLB with TLS termination, rate limiting, custom errors.
+- Ingress: nginx-ingress on NLB with TLS termination, rate limiting.
 - API Gateway: REST API proxy to NLB, stages, usage plan, API keys, Lambda Authorizer.
 - Lambda Authorizer: Node.js OAuth2/JWT validation with caching.
+- Application: Minimal Express.js proxy/mock that demonstrates infrastructure without complex backend logic.
 - Observability: aws-for-fluent-bit to CloudWatch, Container Insights, alarms via SNS.
 
 #### Data Flow
 1. Client requests hit API Gateway with API key + Authorization header.
 2. Lambda Authorizer validates token (JWT or introspection), returns IAM policy.
 3. API Gateway proxies to NLB → ingress-nginx → Service → Weather API pods.
-4. Weather API proxies to OpenWeatherMap; responses flow back through the chain.
-5. Logs from containers are shipped by Fluent Bit to CloudWatch. Metrics exposed at `/metrics` and scraped by external systems if configured.
+4. Weather API returns mock data or proxies to OpenWeatherMap (if API key configured); responses flow back through the chain.
+5. Logs from containers are shipped by Fluent Bit to CloudWatch.
 
 #### Security Architecture
 - IRSA: fine-grained IAM for Kubernetes service accounts (Fluent Bit, app, controllers).
