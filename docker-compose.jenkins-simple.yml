@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: max-weather-jenkins-simple
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker:ro
+      - ~/.aws:/var/jenkins_home/.aws:ro
+      - ~/.kube:/var/jenkins_home/.kube:ro
+      - ./iac:/var/jenkins_home/workspace/max-weather-iac:ro
+    environment:
+      - JENKINS_OPTS=--httpPort=8080
+      - JAVA_OPTS=-Xmx2048m -Xms1024m -Djenkins.install.runSetupWizard=false
+      - JENKINS_ADMIN_PASSWORD=admin123
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-us-west-2}
+      - EKS_CLUSTER_NAME=${EKS_CLUSTER_NAME}
+      - ECR_REGISTRY=${ECR_REGISTRY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - DOCKER_REGISTRY_CREDENTIALS=${DOCKER_REGISTRY_CREDENTIALS}
+    networks:
+      - jenkins-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    privileged: true
+    user: root
+
+volumes:
+  jenkins_home:
+    driver: local
+
+networks:
+  jenkins-network:
+    driver: bridge
