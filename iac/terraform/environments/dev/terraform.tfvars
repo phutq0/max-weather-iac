@@ -1,8 +1,12 @@
-region = "ap-southeast-2"
+region                    = "us-east-1"
 project_name              = "max-weather"
 vpc_cidr                  = "10.0.0.0/16"
 enable_nat_gateway        = true
 eks_cluster_version       = "1.32"
-node_instance_types       = ["t3.medium"]
+node_instance_types       = ["t3.micro"]
 api_gateway_stage_name    = "dev"
 cloudwatch_retention_days = 7
+node_desired_count        = 3
+node_min_count            = 1
+node_max_count            = 4
+enable_ebs_csi_driver     = false

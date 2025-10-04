@@ -6,4 +6,7 @@ variable "node_instance_types" { type = list(string) }
 variable "api_gateway_stage_name" { type = string }
 variable "cloudwatch_retention_days" { type = number }
 variable "enable_nat_gateway" { type = bool }
-
+variable "node_desired_count" { type = number }
+variable "node_min_count" { type = number }
+variable "node_max_count" { type = number }
+variable "enable_ebs_csi_driver" { type = bool }

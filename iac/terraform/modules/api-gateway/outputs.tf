@@ -14,3 +14,8 @@ output "api_key_value" {
   sensitive   = true
 }
 
+output "execution_arn" {
+  value       = aws_api_gateway_rest_api.this.execution_arn
+  description = "API Gateway execution ARN"
+}
+

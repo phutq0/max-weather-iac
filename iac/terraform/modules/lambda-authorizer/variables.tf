@@ -26,6 +26,11 @@ variable "env" {
   default     = {}
 }
 
+variable "api_gateway_execution_arn" {
+  description = "API Gateway execution ARN"
+  type        = string
+}
+
 variable "tags" {
   description = "Common tags"
   type        = map(string)

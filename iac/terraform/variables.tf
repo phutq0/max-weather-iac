@@ -72,3 +72,8 @@ variable "cloudwatch_retention_days" {
   default     = 7
 }
 
+variable "enable_ebs_csi_driver" {
+  description = "Enable EBS CSI driver addon for persistent volume support"
+  type        = bool
+  default     = true
+}

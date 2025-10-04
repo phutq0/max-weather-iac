@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket         = "tfstatedev000"
+    bucket         = "tfstatedev001"
     key            = "max-weather/dev/terraform.tfstate"
-    region         = "ap-southeast-2"
+    region         = "us-east-1"
     # dynamodb_table = "tfstatelockdev000"
     encrypt        = true
   }

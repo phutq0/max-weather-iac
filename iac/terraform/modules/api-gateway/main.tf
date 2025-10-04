@@ -140,6 +140,10 @@ resource "aws_api_gateway_deployment" "this" {
   triggers = {
     redeploy = timestamp()
   }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_stage" "this" {

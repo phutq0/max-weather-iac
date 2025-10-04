@@ -48,6 +48,12 @@ variable "node_instance_types" {
   default     = ["t3.medium"]
 }
 
+variable "enable_ebs_csi_driver" {
+  description = "Enable EBS CSI driver addon for persistent volume support"
+  type        = bool
+  default     = true
+}
+
 variable "tags" {
   description = "Common tags"
   type        = map(string)

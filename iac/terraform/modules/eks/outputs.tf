@@ -23,3 +23,8 @@ output "node_group_name" {
   description = "Managed node group name"
 }
 
+output "ebs_csi_role_arn" {
+  value       = var.enable_ebs_csi_driver ? aws_iam_role.ebs_csi[0].arn : null
+  description = "EBS CSI driver IAM role ARN"
+}
+

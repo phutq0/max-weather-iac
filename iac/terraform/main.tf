@@ -38,6 +38,7 @@ module "eks" {
   node_group_min_size     = var.min_node_count
   node_group_max_size     = var.max_node_count
   node_group_desired_size = var.desired_node_count
+  enable_ebs_csi_driver   = var.enable_ebs_csi_driver
   tags                    = local.tags
 }
 
@@ -56,12 +57,14 @@ module "lambda_authorizer" {
   source = "./modules/lambda-authorizer"
   name   = "${local.name}-authorizer"
   region = var.region
+  api_gateway_execution_arn = module.api_gateway.execution_arn
   env = {
     OAUTH_ISSUER            = "https://issuer.example.com"
     OAUTH_AUDIENCE          = "api://weather"
     OAUTH_INTROSPECTION_URL = "https://issuer.example.com/oauth/introspect"
     OAUTH_CLIENT_ID         = "REPLACE"
     OAUTH_CLIENT_SECRET     = "REPLACE"
+    VERSION                 = "2.0.0"
   }
   tags = local.tags
 }
@@ -77,6 +80,7 @@ module "api_gateway" {
   stage_names           = [var.api_gateway_stage_name]
   tags                  = local.tags
 }
+
 
 output "eks_cluster_name" {
   value       = module.eks.cluster_name
