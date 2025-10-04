@@ -8,7 +8,7 @@ variable "region" {
   type        = string
 }
 
-variable "version" {
+variable "cluster_version" {
   description = "Kubernetes version for EKS cluster"
   type        = string
   default     = "1.29"

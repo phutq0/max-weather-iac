@@ -87,37 +87,43 @@ resource "aws_iam_role_policy_attachment" "fluent_bit" {
   policy_arn = aws_iam_policy.fluent_bit.arn
 }
 
-resource "helm_release" "fluent_bit" {
-  name             = "aws-for-fluent-bit"
-  repository       = "https://aws.github.io/eks-charts"
-  chart            = "aws-for-fluent-bit"
-  namespace        = var.fluent_bit_namespace
-  create_namespace = true
+# Temporarily disabled due to network connectivity issues
+# resource "helm_release" "fluent_bit" {
+#   name             = "aws-for-fluent-bit"
+#   repository       = "https://aws.github.io/eks-charts"
+#   chart            = "aws-for-fluent-bit"
+#   namespace        = var.fluent_bit_namespace
+#   create_namespace = true
+#   wait             = false
+#   timeout          = 300
 
-  values = [yamlencode({
-    serviceAccount = {
-      create      = true
-      name        = "aws-for-fluent-bit"
-      annotations = { "eks.amazonaws.com/role-arn" = aws_iam_role.fluent_bit.arn }
-    }
-    cloudWatch = {
-      logGroupName     = aws_cloudwatch_log_group.applications.name
-      logRetentionDays = local.retention_in_days_app
-    }
-  })]
-}
+#   values = [yamlencode({
+#     serviceAccount = {
+#       create      = true
+#       name        = "aws-for-fluent-bit"
+#       annotations = { "eks.amazonaws.com/role-arn" = aws_iam_role.fluent_bit.arn }
+#     }
+#     cloudWatch = {
+#       logGroupName     = aws_cloudwatch_log_group.applications.name
+#       logRetentionDays = local.retention_in_days_app
+#     }
+#   })]
+# }
 
-resource "helm_release" "cloudwatch_agent" {
-  name             = "cloudwatch-agent"
-  repository       = "https://aws.github.io/eks-charts"
-  chart            = "cloudwatch-agent"
-  namespace        = var.cloudwatch_agent_namespace
-  create_namespace = true
+# Temporarily disabled due to network connectivity issues
+# resource "helm_release" "cloudwatch_agent" {
+#   name             = "cloudwatch-agent"
+#   repository       = "https://aws.github.io/eks-charts"
+#   chart            = "aws-for-fluent-bit"
+#   namespace        = var.cloudwatch_agent_namespace
+#   create_namespace = true
+#   wait             = false
+#   timeout          = 300
 
-  values = [yamlencode({
-    clusterName = var.cluster_name
-  })]
-}
+#   values = [yamlencode({
+#     clusterName = var.cluster_name
+#   })]
+# }
 
 # Alarms
 resource "aws_cloudwatch_metric_alarm" "cpu_high" {

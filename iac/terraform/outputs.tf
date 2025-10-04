@@ -13,15 +13,6 @@ output "private_subnet_ids" {
   description = "Private subnet IDs"
 }
 
-output "eks_cluster_name" {
-  value       = module.eks.cluster_name
-  description = "EKS cluster name"
-}
-
-output "eks_cluster_endpoint" {
-  value       = module.eks.cluster_endpoint
-  description = "EKS cluster endpoint"
-}
 
 output "eks_oidc_issuer" {
   value       = module.eks.cluster_oidc_issuer
@@ -38,10 +29,6 @@ output "sns_alerts_topic_arn" {
   description = "SNS alerts topic ARN"
 }
 
-output "api_gateway_urls" {
-  value       = module.api_gateway.stage_invoke_urls
-  description = "API Gateway URLs"
-}
 
 output "lambda_authorizer_arn" {
   value       = module.lambda_authorizer.lambda_arn

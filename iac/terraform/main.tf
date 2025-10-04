@@ -1,13 +1,3 @@
-terraform {
-  backend "s3" {
-    bucket         = "REPLACE_ME_TF_STATE_BUCKET"
-    key            = "max-weather/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "REPLACE_ME_TF_LOCK_TABLE"
-    encrypt        = true
-  }
-}
-
 provider "aws" {
   region = var.region
 }
@@ -41,7 +31,7 @@ module "eks" {
   source                  = "./modules/eks"
   name                    = local.name
   region                  = var.region
-  version                 = var.eks_cluster_version
+  cluster_version         = var.eks_cluster_version
   vpc_id                  = module.vpc.vpc_id
   private_subnet_ids      = module.vpc.private_subnet_ids
   node_instance_types     = var.node_instance_types
@@ -80,7 +70,7 @@ module "api_gateway" {
   source                = "./modules/api-gateway"
   name                  = "${local.name}-api"
   region                = var.region
-  endpoint_domain       = "REPLACE_BACKEND_DOMAIN"
+  endpoint_domain       = "example.com"
   endpoint_port         = 443
   endpoint_protocol     = "https"
   lambda_authorizer_arn = module.lambda_authorizer.lambda_arn

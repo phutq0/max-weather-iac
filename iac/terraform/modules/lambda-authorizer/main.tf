@@ -21,7 +21,7 @@ locals {
 
 data "archive_file" "zip" {
   type        = "zip"
-  source_dir  = "${path.module}/../../lambda/authorizer"
+  source_dir  = "${path.module}/../../../lambda/authorizer"
   output_path = "${path.module}/package.zip"
 }
 
