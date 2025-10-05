@@ -1,0 +1,25 @@
+{{- if .Values.awsNodeTemplate.enabled }}
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: {{ default "default" .Values.awsNodeTemplate.name }}
+  labels:
+    app.kubernetes.io/name: karpenter
+spec:
+  {{- if .Values.awsNodeTemplate.amiFamily }}
+  amiFamily: {{ .Values.awsNodeTemplate.amiFamily }}
+  {{- end }}
+  {{- if .Values.awsNodeTemplate.subnetSelector }}
+  subnetSelector:
+{{ toYaml .Values.awsNodeTemplate.subnetSelector | indent 4 }}
+  {{- end }}
+  {{- if .Values.awsNodeTemplate.securityGroupSelector }}
+  securityGroupSelector:
+{{ toYaml .Values.awsNodeTemplate.securityGroupSelector | indent 4 }}
+  {{- end }}
+  {{- if .Values.awsNodeTemplate.tags }}
+  tags:
+{{ toYaml .Values.awsNodeTemplate.tags | indent 4 }}
+  {{- end }}
+{{- end }}
+

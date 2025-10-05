@@ -1,0 +1,43 @@
+{{- if .Values.provisioner.enabled }}
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: {{ default "default" .Values.provisioner.name }}
+  labels:
+    app.kubernetes.io/name: karpenter
+spec:
+  {{- if .Values.provisioner.requirements }}
+  requirements:
+{{ toYaml .Values.provisioner.requirements | indent 4 }}
+  {{- end }}
+  {{- if .Values.provisioner.limits }}
+  limits:
+{{ toYaml .Values.provisioner.limits | indent 4 }}
+  {{- end }}
+  {{- if .Values.provisioner.taints }}
+  taints:
+{{ toYaml .Values.provisioner.taints | indent 4 }}
+  {{- end }}
+  {{- if .Values.provisioner.labels }}
+  labels:
+{{ toYaml .Values.provisioner.labels | indent 4 }}
+  {{- end }}
+  {{- if .Values.provisioner.providerRef }}
+  providerRef:
+{{ toYaml .Values.provisioner.providerRef | indent 4 }}
+  {{- end }}
+  {{- if .Values.provisioner.kubeletConfiguration }}
+  kubeletConfiguration:
+{{ toYaml .Values.provisioner.kubeletConfiguration | indent 4 }}
+  {{- end }}
+  {{- if .Values.provisioner.weight }}
+  weight: {{ .Values.provisioner.weight }}
+  {{- end }}
+  {{- if .Values.provisioner.ttlSecondsAfterEmpty }}
+  ttlSecondsAfterEmpty: {{ .Values.provisioner.ttlSecondsAfterEmpty }}
+  {{- end }}
+  {{- if .Values.provisioner.ttlSecondsUntilExpired }}
+  ttlSecondsUntilExpired: {{ .Values.provisioner.ttlSecondsUntilExpired }}
+  {{- end }}
+{{- end }}
+

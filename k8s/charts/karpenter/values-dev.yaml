@@ -23,4 +23,33 @@ serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: "arn:aws:iam::972709131469:role/max-weather-dev-karpenter-node"
 
+# Enable default Provisioner and AWSNodeTemplate for dev
+provisioner:
+  enabled: true
+  name: default
+  requirements:
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot", "on-demand"]
+    - key: "node.kubernetes.io/instance-type"
+      operator: In
+      values: ["t3.small", "t3.medium"]
+  limits:
+    resources:
+      cpu: "8"
+      memory: "16Gi"
+  ttlSecondsAfterEmpty: 30
+  providerRef:
+    name: default
+
+awsNodeTemplate:
+  enabled: true
+  name: default
+  subnetSelector:
+    kubernetes.io/cluster/name: "max-weather-dev"
+  securityGroupSelector:
+    kubernetes.io/cluster/name: "max-weather-dev"
+  tags:
+    Environment: dev
+
 
