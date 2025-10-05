@@ -5,8 +5,8 @@ metadata:
   labels:
     app: weather-api
 data:
-  APP_ENV: "staging"
+  APP_ENV: "dev"
   LOG_LEVEL: "info"
-  WEATHER_API_BASE_URL: "https://api.example.com"
+  WEATHER_API_BASE_URL: "https://api.openweathermap.org/data/3.0"
   PORT: "8080"
 

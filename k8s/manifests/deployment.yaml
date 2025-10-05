@@ -9,7 +9,7 @@ metadata:
     logs.k8s.aws/log-group-name: "/aws/containerlogs/weather-api"
     logs.k8s.aws/retention-days: "30"
 spec:
-  replicas: 3
+  replicas: 1
   revisionHistoryLimit: 5
   strategy:
     type: RollingUpdate
@@ -43,7 +43,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: weather-api
-        image: your-registry/weather-api:latest
+        image: 972709131469.dkr.ecr.ap-southeast-2.amazonaws.com/max-weather-dev:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -56,7 +56,7 @@ spec:
         resources:
           requests:
             cpu: "250m"
-            memory: "256Mi"
+            memory: "128Mi"
           limits:
             cpu: "500m"
             memory: "512Mi"
