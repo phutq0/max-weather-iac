@@ -17,7 +17,7 @@ pipeline {
   environment {
     AWS_REGION = 'us-east-1'
     ECR_ACCOUNT_ID = credentials('ecr-account-id')
-    ECR_REPO = "${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/weather-api"
+    ECR_REPO = "${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/max-weather-dev"
     GIT_CREDENTIALS_ID = 'scm-creds'
     AWS_CREDENTIALS_ID = 'aws-creds'
     SLACK_CHANNEL = '#ci-cd'

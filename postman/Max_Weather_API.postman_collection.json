@@ -1,212 +1,569 @@
 {
   "info": {
     "name": "Max Weather API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "d6e7b3e6-0000-4000-8000-aaaaaaaaaaaa"
+    "description": "Complete API testing suite for Max Weather Platform with OAuth2 authorization",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "item": [
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
     {
-      "name": "OAuth2",
-      "item": [
-        {
-          "name": "Get Access Token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "var json = pm.response.json();",
-                  "pm.environment.set('access_token', json.access_token);",
-                  "pm.environment.set('refresh_token', json.refresh_token);",
-                  "pm.environment.set('token_expiry', Date.now() + (json.expires_in - 30) * 1000);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
-            ],
-            "url": {
-              "raw": "{{oauth_token_url}}",
-              "host": ["{{oauth_token_url}}"]
-            },
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "grant_type", "value": "client_credentials" },
-                { "key": "client_id", "value": "{{client_id}}" },
-                { "key": "client_secret", "value": "{{client_secret}}" },
-                { "key": "scope", "value": "weather.read" }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Refresh Token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "var json = pm.response.json();",
-                  "pm.environment.set('access_token', json.access_token);",
-                  "pm.environment.set('token_expiry', Date.now() + (json.expires_in - 30) * 1000);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
-            ],
-            "url": {
-              "raw": "{{oauth_token_url}}",
-              "host": ["{{oauth_token_url}}"]
-            },
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "grant_type", "value": "refresh_token" },
-                { "key": "client_id", "value": "{{client_id}}" },
-                { "key": "client_secret", "value": "{{client_secret}}" },
-                { "key": "refresh_token", "value": "{{refresh_token}}" }
-              ]
-            }
-          }
-        }
-      ],
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (pm.environment.get('token_expiry') && Date.now() > Number(pm.environment.get('token_expiry'))) {",
-              "  postman.setNextRequest('Refresh Token');",
-              "}"
-            ]
-          }
-        }
-      ]
+      "key": "base_url",
+      "value": "https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/dev",
+      "type": "string"
     },
     {
-      "name": "Weather API",
-      "item": [
-        {
-          "name": "Current by City",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{access_token}}" },
-              { "key": "x-api-key", "value": "{{api_key}}" }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/weather/current?city={{city}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "weather", "current"],
-              "query": [{ "key": "city", "value": "{{city}}" }]
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Response time < 1000ms', function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
-                  "pm.test('Content-Type', function () { pm.response.to.have.header('Content-Type'); });",
-                  "var schema = { type: 'object' };",
-                  "pm.test('Schema valid', function () { pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true; });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "Forecast by City",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{access_token}}" },
-              { "key": "x-api-key", "value": "{{api_key}}" }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/weather/forecast?city={{city}}&days=5",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "weather", "forecast"],
-              "query": [
-                { "key": "city", "value": "{{city}}" },
-                { "key": "days", "value": "5" }
-              ]
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Response time < 1000ms', function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
-                  "pm.test('Content-Type', function () { pm.response.to.have.header('Content-Type'); });",
-                  "var schema = { type: 'object' };",
-                  "pm.test('Schema valid', function () { pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true; });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "By Location",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{access_token}}" },
-              { "key": "x-api-key", "value": "{{api_key}}" }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/v1/weather/location/{{latitude}}/{{longitude}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "v1", "weather", "location", "{{latitude}}", "{{longitude}}"]
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Response time < 1000ms', function () { pm.expect(pm.response.responseTime).to.be.below(1000); });",
-                  "pm.test('Content-Type', function () { pm.response.to.have.header('Content-Type'); });",
-                  "var schema = { type: 'object' };",
-                  "pm.test('Schema valid', function () { pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true; });"
-                ]
-              }
-            }
-          ]
-        }
-      ]
+      "key": "auth_token",
+      "value": "your-test-token-here",
+      "type": "string"
     }
   ],
-  "variable": [
-    { "key": "base_url", "value": "https://staging.example.com" },
-    { "key": "api_key", "value": "" },
-    { "key": "access_token", "value": "" },
-    { "key": "oauth_token_url", "value": "https://issuer.example.com/oauth/token" },
-    { "key": "client_id", "value": "" },
-    { "key": "client_secret", "value": "" },
-    { "key": "city", "value": "Singapore" },
-    { "key": "latitude", "value": "1.3521" },
-    { "key": "longitude", "value": "103.8198" }
+  "item": [
+    {
+      "name": "1. Health Checks",
+      "item": [
+        {
+          "name": "API Gateway Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is acceptable\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status field\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check if API Gateway and backend service are healthy"
+          },
+          "response": []
+        }
+      ],
+      "description": "Basic health check endpoints"
+    },
+    {
+      "name": "2. Authorization Tests",
+      "item": [
+        {
+          "name": "Unauthorized Request (No Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401 Unauthorized\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message indicates missing authorization\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Unauthorized');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather",
+              "host": ["{{base_url}}"],
+              "path": ["weather"]
+            },
+            "description": "Test that requests without authorization are rejected"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401 or 403\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates invalid token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message.toLowerCase()).to.include('unauthorized', 'forbidden', 'invalid');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "invalid-token-12345",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather",
+              "host": ["{{base_url}}"],
+              "path": ["weather"]
+            },
+            "description": "Test that requests with invalid tokens are rejected"
+          },
+          "response": []
+        },
+        {
+          "name": "Expired Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates token expired\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message.toLowerCase()).to.include('expired', 'unauthorized');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "expired-token",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather",
+              "host": ["{{base_url}}"],
+              "path": ["weather"]
+            },
+            "description": "Test that expired tokens are rejected"
+          },
+          "response": []
+        },
+        {
+          "name": "Valid Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.not.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather",
+              "host": ["{{base_url}}"],
+              "path": ["weather"]
+            },
+            "description": "Test that valid tokens allow access"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test OAuth2 authorization flow"
+    },
+    {
+      "name": "3. Weather API Endpoints",
+      "item": [
+        {
+          "name": "Get Current Weather",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is acceptable\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has required weather fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('location');",
+                  "    pm.expect(jsonData).to.have.property('temperature');",
+                  "    pm.expect(jsonData).to.have.property('conditions');",
+                  "});",
+                  "",
+                  "pm.test(\"Temperature is a number\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.temperature).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/current?location=Singapore",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "current"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Singapore"
+                }
+              ]
+            },
+            "description": "Get current weather for a location"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Weather Forecast",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has forecast data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('location');",
+                  "    pm.expect(jsonData).to.have.property('forecast');",
+                  "    pm.expect(jsonData.forecast).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Forecast has multiple days\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.forecast.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each forecast day has required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forecast.forEach(function(day) {",
+                  "        pm.expect(day).to.have.property('date');",
+                  "        pm.expect(day).to.have.property('temperature');",
+                  "        pm.expect(day).to.have.property('conditions');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/forecast?location=Singapore&days=7",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "forecast"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Singapore"
+                },
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "Get weather forecast for multiple days"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Weather by Coordinates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has weather data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('coordinates');",
+                  "    pm.expect(jsonData).to.have.property('temperature');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/coordinates?lat=1.3521&lon=103.8198",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "coordinates"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "1.3521",
+                  "description": "Latitude"
+                },
+                {
+                  "key": "lon",
+                  "value": "103.8198",
+                  "description": "Longitude"
+                }
+              ]
+            },
+            "description": "Get weather by GPS coordinates"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Location",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message is provided\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/current?location=InvalidLocation12345",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "current"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "InvalidLocation12345"
+                }
+              ]
+            },
+            "description": "Test error handling for invalid location"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test weather API functionality"
+    },
+    {
+      "name": "4. Performance Tests",
+      "item": [
+        {
+          "name": "Stress Test - Multiple Locations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time under load\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "console.log('Response time: ' + pm.response.responseTime + 'ms');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/current?location={{$randomCity}}",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "current"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "{{$randomCity}}"
+                }
+              ]
+            },
+            "description": "Use with Postman Runner to test multiple requests"
+          },
+          "response": []
+        }
+      ],
+      "description": "Performance and load testing"
+    },
+    {
+      "name": "5. Error Handling",
+      "item": [
+        {
+          "name": "Missing Required Parameters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message indicates missing parameter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error.toLowerCase()).to.include('required', 'missing', 'parameter');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/current",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "current"]
+            },
+            "description": "Test error handling when required parameters are missing"
+          },
+          "response": []
+        },
+        {
+          "name": "Method Not Allowed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 405\", function () {",
+                  "    pm.response.to.have.status(405);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/weather/current?location=Singapore",
+              "host": ["{{base_url}}"],
+              "path": ["weather", "current"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Singapore"
+                }
+              ]
+            },
+            "description": "Test that incorrect HTTP methods are rejected"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test error handling and edge cases"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// You can add token refresh logic here",
+          "// For now, just ensure token is set",
+          "if (!pm.environment.get('auth_token')) {",
+          "    console.log('Warning: auth_token not set in environment');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test for all requests",
+          "pm.test(\"Content-Type is present\", function () {",
+          "    pm.response.to.have.header(\"Content-Type\");",
+          "});"
+        ]
+      }
+    }
   ]
 }
-
