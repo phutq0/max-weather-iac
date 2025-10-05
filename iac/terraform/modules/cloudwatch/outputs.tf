@@ -8,3 +8,8 @@ output "sns_topic_arn" {
   description = "SNS topic ARN for alerts"
 }
 
+output "fluent_bit_role_arn" {
+  value       = aws_iam_role.fluent_bit.arn
+  description = "FluentBit IAM role ARN for CloudWatch logs"
+}
+

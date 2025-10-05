@@ -38,7 +38,13 @@ variable "oidc_provider_url" {
 variable "fluent_bit_namespace" {
   description = "Namespace for aws-for-fluent-bit"
   type        = string
-  default     = "kube-system"
+  default     = "amazon-cloudwatch"
+}
+
+variable "fluent_bit_service_account" {
+  description = "Service account for aws-for-fluent-bit"
+  type        = string
+  default     = "fluent-bit"
 }
 
 variable "cloudwatch_agent_namespace" {

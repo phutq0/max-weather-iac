@@ -71,3 +71,8 @@ output "lambda_authorizer_role_arn" {
   description = "Lambda authorizer IAM role ARN"
 }
 
+output "fluent_bit_role_arn" {
+  value       = module.cloudwatch.fluent_bit_role_arn
+  description = "FluentBit IAM role ARN for CloudWatch logs"
+}
+
