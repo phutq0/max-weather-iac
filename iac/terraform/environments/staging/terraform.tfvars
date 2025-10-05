@@ -15,6 +15,11 @@ openweather_api_key = "your-openweather-api-key-here"
 eks_access_entries = []
 
 # Optional legacy aws-auth mappings
+# Optional legacy aws-auth mappings
 aws_auth_map_users = []
 aws_auth_map_roles = []
+
+# Karpenter
+enable_karpenter = true
+karpenter_service_account = "karpenter/karpenter"
 

@@ -367,3 +367,121 @@ resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller" {
   policy_arn = aws_iam_policy.aws_load_balancer_controller.arn
 }
 
+
+# -----------------------------
+# Karpenter IAM (optional)
+# -----------------------------
+
+locals {
+  karpenter_service_account_ns   = split("/", var.karpenter_service_account)[0]
+  karpenter_service_account_name = split("/", var.karpenter_service_account)[1]
+}
+
+# Karpenter Controller IRSA Role
+resource "aws_iam_role" "karpenter_controller" {
+  count                = var.enable_karpenter ? 1 : 0
+  name                 = "${var.cluster_name}-karpenter-controller"
+  permissions_boundary = var.permission_boundary_arn
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Principal = { Federated = local.oidc_provider_arn },
+      Action    = "sts:AssumeRoleWithWebIdentity",
+      Condition = {
+        StringEquals = {
+          "${local.oidc_provider}:sub" = "system:serviceaccount:${local.karpenter_service_account_ns}:${local.karpenter_service_account_name}"
+        }
+      }
+    }]
+  })
+  tags = local.tags
+}
+
+data "aws_iam_policy_document" "karpenter_controller" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:Describe*",
+      "ssm:GetParameter",
+      "iam:PassRole",
+      "iam:CreateInstanceProfile",
+      "iam:DeleteInstanceProfile",
+      "iam:AddRoleToInstanceProfile",
+      "iam:RemoveRoleFromInstanceProfile",
+      "iam:TagInstanceProfile",
+      "iam:UntagInstanceProfile"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:RunInstances",
+      "ec2:CreateFleet",
+      "ec2:CreateLaunchTemplate",
+      "ec2:DeleteLaunchTemplate",
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+      "ec2:TerminateInstances",
+      "ec2:CreateSecurityGroup",
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupIngress"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "karpenter_controller" {
+  count  = var.enable_karpenter ? 1 : 0
+  name   = "${var.cluster_name}-karpenter-controller"
+  policy = data.aws_iam_policy_document.karpenter_controller.json
+}
+
+resource "aws_iam_role_policy_attachment" "karpenter_controller" {
+  count      = var.enable_karpenter ? 1 : 0
+  role       = aws_iam_role.karpenter_controller[0].name
+  policy_arn = aws_iam_policy.karpenter_controller[0].arn
+}
+
+# Karpenter Node Role and Instance Profile
+resource "aws_iam_role" "karpenter_node" {
+  count                = var.enable_karpenter ? 1 : 0
+  name                 = "${var.cluster_name}-karpenter-node"
+  permissions_boundary = var.permission_boundary_arn
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Principal = { Service = "ec2.amazonaws.com" },
+      Action    = "sts:AssumeRole"
+    }]
+  })
+  tags = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "karpenter_node_worker" {
+  count      = var.enable_karpenter ? 1 : 0
+  role       = aws_iam_role.karpenter_node[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "karpenter_cni" {
+  count      = var.enable_karpenter ? 1 : 0
+  role       = aws_iam_role.karpenter_node[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "karpenter_registry" {
+  count      = var.enable_karpenter ? 1 : 0
+  role       = aws_iam_role.karpenter_node[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_instance_profile" "karpenter" {
+  count = var.enable_karpenter ? 1 : 0
+  name  = "${var.cluster_name}-karpenter"
+  role  = aws_iam_role.karpenter_node[0].name
+  tags  = local.tags
+}
+

@@ -21,3 +21,18 @@ output "aws_load_balancer_controller_role_arn" {
   description = "AWS Load Balancer Controller role ARN"
 }
 
+output "karpenter_controller_role_arn" {
+  value       = try(aws_iam_role.karpenter_controller[0].arn, null)
+  description = "Karpenter controller IRSA role ARN (if enabled)"
+}
+
+output "karpenter_node_role_arn" {
+  value       = try(aws_iam_role.karpenter_node[0].arn, null)
+  description = "Karpenter node role ARN (if enabled)"
+}
+
+output "karpenter_instance_profile_name" {
+  value       = try(aws_iam_instance_profile.karpenter[0].name, null)
+  description = "Karpenter instance profile name (if enabled)"
+}
+

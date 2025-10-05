@@ -60,3 +60,7 @@ variable "app_service_account" { type = string }
 variable "app_s3_bucket_arns" { type = list(string) }
 variable "app_dynamodb_table_arns" { type = list(string) }
 variable "openweather_api_key" { type = string }
+
+# Karpenter
+variable "enable_karpenter" { type = bool }
+variable "karpenter_service_account" { type = string }

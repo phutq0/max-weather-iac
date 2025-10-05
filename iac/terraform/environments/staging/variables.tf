@@ -23,3 +23,7 @@ variable "aws_auth_map_roles" { type = list(object({
   username = string
   groups   = list(string)
 })) }
+
+# Karpenter
+variable "enable_karpenter" { type = bool }
+variable "karpenter_service_account" { type = string }

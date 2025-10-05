@@ -30,5 +30,9 @@ module "root" {
 
   # OpenWeather API Configuration
   openweather_api_key = var.openweather_api_key
+
+  # Karpenter IAM
+  enable_karpenter          = var.enable_karpenter
+  karpenter_service_account = var.karpenter_service_account
 }
 

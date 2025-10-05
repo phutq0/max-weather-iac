@@ -18,3 +18,7 @@ eks_access_entries = []
 aws_auth_map_users = []
 aws_auth_map_roles = []
 
+# Karpenter
+enable_karpenter = true
+karpenter_service_account = "karpenter/karpenter"
+

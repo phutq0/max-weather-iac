@@ -49,3 +49,16 @@ variable "app_dynamodb_table_arns" {
   default     = []
 }
 
+# Karpenter
+variable "enable_karpenter" {
+  description = "Whether to create IAM roles for Karpenter"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_service_account" {
+  description = "Kubernetes service account for Karpenter controller (namespace/name)"
+  type        = string
+  default     = "karpenter/karpenter"
+}
+

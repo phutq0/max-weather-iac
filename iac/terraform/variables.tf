@@ -215,6 +215,18 @@ variable "app_dynamodb_table_arns" {
   default     = []
 }
 
+variable "enable_karpenter" {
+  description = "Enable IAM roles for Karpenter"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_service_account" {
+  description = "Karpenter controller service account in format namespace/name"
+  type        = string
+  default     = "karpenter/karpenter"
+}
+
 variable "openweather_api_key" {
   description = "OpenWeather API key for weather data access"
   type        = string
