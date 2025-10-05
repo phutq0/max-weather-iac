@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "fluent_bit_assume" {
     condition {
       test     = "StringEquals"
       variable = "${replace(var.oidc_provider_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:${var.fluent_bit_namespace}:fluent-bit"]
+      values   = ["system:serviceaccount:${var.fluent_bit_namespace}:${var.fluent_bit_service_account}"]
     }
   }
 }
