@@ -83,7 +83,7 @@ max-weather-iac/
 ### 5. CI/CD Pipeline
 - **Jenkins Pipeline**: Multi-stage deployment
   - Build & Test → Deploy to Staging → Manual Approval → Deploy to Production
-- **Blue-Green Deployment**: Zero-downtime deployments
+- **Rollout Deployment**: Zero-downtime deployments
 - **Rollback capability**: Automatic rollback on deployment failures
 
 ### 6. CloudWatch Logging

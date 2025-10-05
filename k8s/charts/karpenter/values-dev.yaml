@@ -1,0 +1,26 @@
+# Dev overrides for Karpenter
+
+# Reduce replicas for dev
+replicas: 1
+
+# Verbose logging in dev
+logLevel: debug
+logEncoding: console
+
+# Dev EKS cluster identifiers
+clusterName: "max-weather-dev"
+
+# IMPORTANT: Set this to your dev EKS API server endpoint before installing.
+# You can get it from Terraform outputs (eks_cluster_endpoint) or `aws eks describe-cluster`.
+clusterEndpoint: "https://7629DB42466E0342547DBE54E094C7B3.yl4.ap-southeast-2.eks.amazonaws.com"
+
+aws:
+  # Default instance profile for nodes launched by Karpenter in dev
+  defaultInstanceProfile: "KarpenterNodeInstanceProfile-max-weather-dev"
+
+# ServiceAccount annotations (e.g., IRSA role) can be set here when available
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::972709131469:role/max-weather-dev-karpenter-node"
+
+
