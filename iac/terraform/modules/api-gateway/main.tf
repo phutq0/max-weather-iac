@@ -17,7 +17,7 @@ locals {
 
 resource "aws_api_gateway_rest_api" "this" {
   name        = var.name
-  description = "REST API proxying to LB backend"
+  description = "REST API proxying to OpenWeather API"
   endpoint_configuration {
     types = ["REGIONAL"]
   }
@@ -47,7 +47,7 @@ resource "aws_api_gateway_integration" "proxy" {
   resource_id             = aws_api_gateway_resource.proxy.id
   http_method             = aws_api_gateway_method.proxy_any.http_method
   type                    = "HTTP_PROXY"
-  uri                     = "${var.endpoint_protocol}://${var.endpoint_domain}:${var.endpoint_port}/{proxy}"
+  uri                     = "${var.endpoint_protocol}://${var.endpoint_domain}:${var.endpoint_port}/{proxy}?appid=${var.openweather_api_key}"
   integration_http_method = "ANY"
   passthrough_behavior    = "WHEN_NO_MATCH"
   request_parameters = {
@@ -69,7 +69,7 @@ resource "aws_api_gateway_integration" "root_proxy" {
   resource_id             = aws_api_gateway_rest_api.this.root_resource_id
   http_method             = aws_api_gateway_method.root_any.http_method
   type                    = "HTTP_PROXY"
-  uri                     = "${var.endpoint_protocol}://${var.endpoint_domain}:${var.endpoint_port}"
+  uri                     = "${var.endpoint_protocol}://${var.endpoint_domain}:${var.endpoint_port}?appid=${var.openweather_api_key}"
   integration_http_method = "ANY"
   passthrough_behavior    = "WHEN_NO_MATCH"
 }

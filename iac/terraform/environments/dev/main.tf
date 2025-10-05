@@ -60,5 +60,8 @@ module "root" {
   app_service_account = var.app_service_account
   app_s3_bucket_arns = var.app_s3_bucket_arns
   app_dynamodb_table_arns = var.app_dynamodb_table_arns
+
+  # OpenWeather API Configuration
+  openweather_api_key = var.openweather_api_key
 }
 

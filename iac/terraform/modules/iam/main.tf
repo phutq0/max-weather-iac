@@ -75,14 +75,6 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
   policy_arn = aws_iam_policy.external_dns[0].arn
 }
 
-data "aws_iam_role" "cluster_autoscaler" {
-  name = "${var.cluster_name}-cluster-autoscaler"
-}
-
-data "aws_iam_policy" "cluster_autoscaler" {
-  name = "${var.cluster_name}-cluster-autoscaler"
-}
-
 resource "aws_iam_role" "app_irsa" {
   name                 = "${var.cluster_name}-app-irsa"
   permissions_boundary = var.permission_boundary_arn

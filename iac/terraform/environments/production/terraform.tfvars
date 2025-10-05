@@ -7,3 +7,6 @@ node_instance_types       = ["m5.large"]
 api_gateway_stage_name    = "production"
 cloudwatch_retention_days = 30
 
+# OpenWeather API Configuration
+openweather_api_key = "your-openweather-api-key-here"
+

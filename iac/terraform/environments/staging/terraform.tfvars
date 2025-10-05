@@ -7,3 +7,6 @@ node_instance_types       = ["t3.medium"]
 api_gateway_stage_name    = "staging"
 cloudwatch_retention_days = 7
 
+# OpenWeather API Configuration
+openweather_api_key = "your-openweather-api-key-here"
+

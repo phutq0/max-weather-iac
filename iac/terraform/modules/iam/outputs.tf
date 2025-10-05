@@ -10,15 +10,6 @@ output "external_dns_role_arn" {
   description = "IRSA role ARN for ExternalDNS (if enabled)"
 }
 
-output "cluster_autoscaler_role_arn" {
-  value       = data.aws_iam_role.cluster_autoscaler.arn
-  description = "IRSA role ARN for Cluster Autoscaler"
-}
-
-output "app_irsa_role_arn" {
-  value       = aws_iam_role.app_irsa.arn
-  description = "IRSA role ARN for application service account"
-}
 
 output "lambda_authorizer_role_arn" {
   value       = aws_iam_role.lambda_authorizer.arn

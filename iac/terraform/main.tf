@@ -100,11 +100,12 @@ module "api_gateway" {
   source                = "./modules/api-gateway"
   name                  = "${local.name}-api"
   region                = var.region
-  endpoint_domain       = "example.com"
+  endpoint_domain       = "api.openweathermap.org"
   endpoint_port         = 443
   endpoint_protocol     = "https"
   lambda_authorizer_arn = module.lambda_authorizer.lambda_arn
   stage_names           = [var.api_gateway_stage_name]
+  openweather_api_key   = var.openweather_api_key
   tags                  = local.tags
 }
 

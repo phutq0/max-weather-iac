@@ -41,3 +41,6 @@ enable_external_dns = false
 app_service_account = "default/weather-api"
 app_s3_bucket_arns = []
 app_dynamodb_table_arns = []
+
+# OpenWeather API Configuration
+openweather_api_key = "db6ebf82c50682cd3a95f68cf0c57a74"

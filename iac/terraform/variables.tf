@@ -214,3 +214,9 @@ variable "app_dynamodb_table_arns" {
   type        = list(string)
   default     = []
 }
+
+variable "openweather_api_key" {
+  description = "OpenWeather API key for weather data access"
+  type        = string
+  sensitive   = true
+}
