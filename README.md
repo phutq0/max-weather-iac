@@ -50,6 +50,9 @@ max-weather-iac/
 └── README.md                        # This file
 ```
 
+## Infrastructure Architecture
+![architecture](./diagrams/architecture.png)
+
 ## Key Features
 
 ### 1. High Availability & Fault Tolerance
