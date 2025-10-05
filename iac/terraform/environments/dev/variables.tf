@@ -10,6 +10,23 @@ variable "node_desired_count" { type = number }
 variable "node_min_count" { type = number }
 variable "node_max_count" { type = number }
 variable "enable_ebs_csi_driver" { type = bool }
+variable "eks_access_entries" { type = list(object({
+  principal_arn      = string
+  policy_arn         = string
+  access_scope_type  = string
+  namespaces         = optional(list(string), [])
+})) }
+variable "aws_auth_map_users" { type = list(object({
+  userarn  = string
+  username = string
+  groups   = list(string)
+})) }
+variable "aws_auth_map_roles" { type = list(object({
+  rolearn  = string
+  username = string
+  groups   = list(string)
+})) }
+
 
 # Node Group Configuration
 variable "enable_spot_node_group" { type = bool }
