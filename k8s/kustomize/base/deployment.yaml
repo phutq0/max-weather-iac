@@ -23,27 +23,27 @@ spec:
     metadata:
       labels:
         app: weather-api
-      annotations:
-        logs.k8s.aws/enabled: "true"
-        logs.k8s.aws/log-group-name: "/aws/containerlogs/weather-api"
-        logs.k8s.aws/retention-days: "30"
+      # annotations:
+      #   logs.k8s.aws/enabled: "true"
+      #   logs.k8s.aws/log-group-name: "/aws/containerlogs/weather-api"
+      #   logs.k8s.aws/retention-days: "30"
     spec:
       serviceAccountName: weather-api
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - weather-api
-              topologyKey: kubernetes.io/hostname
+      # affinity:
+      #   podAntiAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #     - weight: 100
+      #       podAffinityTerm:
+      #         labelSelector:
+      #           matchExpressions:
+      #           - key: app
+      #             operator: In
+      #             values:
+      #             - weather-api
+      #         topologyKey: kubernetes.io/hostname
       containers:
       - name: weather-api
-        image: 972709131469.dkr.ecr.ap-southeast-2.amazonaws.com/max-weather-dev:latest
+        image: weather-api:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
