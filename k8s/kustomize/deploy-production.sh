@@ -18,7 +18,7 @@ kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f 
 
 # Deploy weather API using Kustomize
 echo "🌤️  Deploying weather API to production environment..."
-kubectl apply -k overlays/production
+kubectl apply -k overlays/weather-api/production
 
 # Wait for deployment to be ready
 echo "⏳ Waiting for weather API to be ready..."

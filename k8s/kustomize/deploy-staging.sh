@@ -18,7 +18,7 @@ kubectl create namespace staging --dry-run=client -o yaml | kubectl apply -f -
 
 # Deploy weather API using Kustomize
 echo "🌤️  Deploying weather API to staging environment..."
-kubectl apply -k overlays/staging
+kubectl apply -k overlays/weather-api/staging
 
 # Wait for deployment to be ready
 echo "⏳ Waiting for weather API to be ready..."

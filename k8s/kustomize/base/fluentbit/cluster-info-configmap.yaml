@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-cluster-info
+  namespace: amazon-cloudwatch
+  labels:
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/component: cluster-info
+    app.kubernetes.io/part-of: logging
+data:
+  cluster.name: "cluster-name"
+  http.server: "On"
+  http.port: "2020"
+  read.head: "Off"
+  read.tail: "On"
+  logs.region: "cluster-region"

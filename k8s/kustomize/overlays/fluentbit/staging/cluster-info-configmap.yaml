@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-cluster-info
+data:
+  cluster.name: "max-weather-staging"
+  http.server: "On"
+  http.port: "2020"
+  read.head: "Off"
+  read.tail: "On"
+  logs.region: "ap-southeast-2"

@@ -2,18 +2,18 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: weather-api-dev
+  name: weather-api-production
 
-namespace: dev
+namespace: production
 
 resources:
-  - ../../base
+  - ../../../base/weather-api
 
-namePrefix: dev-
+namePrefix: prod-
 
 commonLabels:
-  environment: dev
-  tier: development
+  environment: production
+  tier: production
 
 patchesStrategicMerge:
   - deployment-patch.yaml
@@ -22,9 +22,9 @@ patchesStrategicMerge:
 
 images:
   - name: weather-api
-    newName: 972709131469.dkr.ecr.ap-southeast-2.amazonaws.com/max-weather-dev
-    newTag: latest-v1
+    newName: 972709131469.dkr.ecr.ap-southeast-2.amazonaws.com/max-weather-prod
+    newTag: latest
 
 replicas:
   - name: weather-api
-    count: 1
+    count: 3
