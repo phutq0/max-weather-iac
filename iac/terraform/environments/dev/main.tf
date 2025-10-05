@@ -53,5 +53,12 @@ module "root" {
   ecr_enable_lifecycle_policy = var.ecr_enable_lifecycle_policy
   ecr_max_image_count = var.ecr_max_image_count
   ecr_max_image_age_days = var.ecr_max_image_age_days
+  
+  # IAM Settings
+  permission_boundary_arn = var.permission_boundary_arn
+  enable_external_dns = var.enable_external_dns
+  app_service_account = var.app_service_account
+  app_s3_bucket_arns = var.app_s3_bucket_arns
+  app_dynamodb_table_arns = var.app_dynamodb_table_arns
 }
 

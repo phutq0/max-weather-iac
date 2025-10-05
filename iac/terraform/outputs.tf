@@ -35,3 +35,39 @@ output "lambda_authorizer_arn" {
   description = "Lambda authorizer ARN"
 }
 
+output "aws_load_balancer_controller_role_arn" {
+  value       = module.iam.aws_load_balancer_controller_role_arn
+  description = "AWS Load Balancer Controller IAM role ARN"
+}
+
+# EKS Module Outputs (EKS roles are managed by EKS module)
+output "eks_cluster_role_arn" {
+  value       = module.eks.cluster_role_arn
+  description = "EKS cluster IAM role ARN"
+}
+
+output "eks_node_role_arn" {
+  value       = module.eks.node_role_arn
+  description = "EKS node group IAM role ARN"
+}
+
+output "oidc_provider_arn" {
+  value       = module.iam.oidc_provider_arn
+  description = "OIDC provider ARN"
+}
+
+output "cluster_autoscaler_role_arn" {
+  value       = module.iam.cluster_autoscaler_role_arn
+  description = "Cluster Autoscaler IAM role ARN"
+}
+
+output "app_irsa_role_arn" {
+  value       = module.iam.app_irsa_role_arn
+  description = "Application IRSA role ARN"
+}
+
+output "lambda_authorizer_role_arn" {
+  value       = module.iam.lambda_authorizer_role_arn
+  description = "Lambda authorizer IAM role ARN"
+}
+

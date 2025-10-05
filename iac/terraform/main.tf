@@ -27,6 +27,20 @@ module "vpc" {
   tags                 = local.tags
 }
 
+module "iam" {
+  source = "./modules/iam"
+  
+  cluster_name              = local.name
+  region                    = var.region
+  oidc_issuer_url          = module.eks.cluster_oidc_issuer
+  permission_boundary_arn  = var.permission_boundary_arn
+  enable_external_dns      = var.enable_external_dns
+  app_service_account      = var.app_service_account
+  app_s3_bucket_arns       = var.app_s3_bucket_arns
+  app_dynamodb_table_arns  = var.app_dynamodb_table_arns
+  tags                     = local.tags
+}
+
 module "eks" {
   source                  = "./modules/eks"
   name                    = local.name

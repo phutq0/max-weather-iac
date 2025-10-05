@@ -33,3 +33,13 @@ output "ebs_csi_role_arn" {
   description = "EBS CSI driver IAM role ARN"
 }
 
+output "cluster_role_arn" {
+  value       = aws_iam_role.cluster.arn
+  description = "EKS cluster IAM role ARN"
+}
+
+output "node_role_arn" {
+  value       = aws_iam_role.nodes.arn
+  description = "EKS node group IAM role ARN"
+}
+

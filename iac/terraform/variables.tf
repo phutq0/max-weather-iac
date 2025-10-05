@@ -183,3 +183,34 @@ variable "ecr_max_image_age_days" {
   type        = number
   default     = 7
 }
+
+# IAM Module Variables
+variable "permission_boundary_arn" {
+  description = "ARN of the permission boundary to attach to all IAM roles"
+  type        = string
+  default     = null
+}
+
+variable "enable_external_dns" {
+  description = "Enable ExternalDNS for Route53 DNS management"
+  type        = bool
+  default     = false
+}
+
+variable "app_service_account" {
+  description = "Service account name for application IRSA role"
+  type        = string
+  default     = "default/weather-api"
+}
+
+variable "app_s3_bucket_arns" {
+  description = "List of S3 bucket ARNs for application access"
+  type        = list(string)
+  default     = []
+}
+
+variable "app_dynamodb_table_arns" {
+  description = "List of DynamoDB table ARNs for application access"
+  type        = list(string)
+  default     = []
+}

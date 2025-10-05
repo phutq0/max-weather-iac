@@ -34,3 +34,10 @@ ecr_encryption_type = "AES256"
 ecr_enable_lifecycle_policy = true
 ecr_max_image_count = 10
 ecr_max_image_age_days = 7
+
+# IAM Configuration
+permission_boundary_arn = null
+enable_external_dns = false
+app_service_account = "default/weather-api"
+app_s3_bucket_arns = []
+app_dynamodb_table_arns = []

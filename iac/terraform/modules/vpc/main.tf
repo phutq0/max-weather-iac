@@ -155,9 +155,10 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = merge(local.tags, {
-    "Name"                       = "${var.name}-public-${each.value}"
-    "kubernetes.io/role/elb"     = "1"
-    "kubernetes.io/cluster/name" = var.name
+    "Name"                            = "${var.name}-public-${each.value}"
+    "kubernetes.io/role/elb"         = "1"
+    "kubernetes.io/cluster/${var.name}" = "shared"
+    "kubernetes.io/cluster/name"     = var.name
   })
 }
 
@@ -170,8 +171,10 @@ resource "aws_subnet" "private" {
 
   tags = merge(local.tags, {
     "Name"                            = "${var.name}-private-${each.value}"
+    "kubernetes.io/role/elb"          = "1"
     "kubernetes.io/role/internal-elb" = "1"
-    "kubernetes.io/cluster/name"      = var.name
+    "kubernetes.io/cluster/${var.name}" = "shared"
+    "kubernetes.io/cluster/name"     = var.name
   })
 }
 

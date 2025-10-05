@@ -35,3 +35,10 @@ variable "ecr_encryption_type" { type = string }
 variable "ecr_enable_lifecycle_policy" { type = bool }
 variable "ecr_max_image_count" { type = number }
 variable "ecr_max_image_age_days" { type = number }
+
+# IAM Configuration
+variable "permission_boundary_arn" { type = string }
+variable "enable_external_dns" { type = bool }
+variable "app_service_account" { type = string }
+variable "app_s3_bucket_arns" { type = list(string) }
+variable "app_dynamodb_table_arns" { type = list(string) }
