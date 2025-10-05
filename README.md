@@ -46,7 +46,8 @@ max-weather-iac/
 ├── docs/                            # Documentation
 │   ├── ARCHITECTURE.md              # System architecture
 │   └── architecture.drawio          # Visual diagram
-├── Jenkinsfile                      # CI/CD pipeline
+├── Jenkinsfile.staging              # CI/CD pipeline for staging
+├── Jenkinsfile.production           # CI/CD pipeline for production
 └── README.md                        # This file
 ```
 

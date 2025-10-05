@@ -51,8 +51,10 @@ jenkins/
 │   ├── 04-configure-kubernetes.groovy
 │   └── 05-run-seed-job.groovy
 ├── jobs/                        # Job DSL scripts
-│   ├── seed-job.groovy
-│   └── max-weather-pipeline.groovy
+│   ├── cleanup-pipeline.groovy
+│   ├── infrastructure-pipeline.groovy
+│   ├── max-weather-pipeline.groovy
+│   └── seed-job.groovy
 ├── scripts/                     # Helper scripts
 │   ├── wait-for-jenkins.sh
 │   ├── configure-credentials.sh
