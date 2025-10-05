@@ -1,0 +1,69 @@
+controller:
+  replicaCount: 1
+
+  service:
+    type: LoadBalancer
+    annotations:
+      # Use AWS Load Balancer Controller
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+      service.beta.kubernetes.io/aws-load-balancer-target-type: "ip"
+      # AWS will automatically select subnets with proper tags
+    ports:
+      http: 80
+    targetPorts:
+      http: http
+
+  config:
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"
+    enable-real-ip: "true"
+    ssl-redirect: "false"
+    custom-http-errors: "404,500,502,503,504"
+    proxy-buffer-size: "16k"
+    proxy-body-size: "10m"
+    proxy-read-timeout: "60"
+    proxy-send-timeout: "60"
+    # API Gateway specific configurations
+    use-proxy-protocol: "false"
+    real-ip-header: "X-Forwarded-For"
+    set-real-ip-from: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    # Handle API Gateway headers
+    proxy-set-headers: "nginx-ingress/nginx-configmap"
+    # Enable CORS for API Gateway
+    enable-cors: "true"
+    cors-allow-origin: "*"
+    cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token"
+    cors-allow-credentials: "true"
+
+  # Disable SSL/TLS for dev environment
+  extraArgs: {}
+
+defaultBackend:
+  enabled: false
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: "nginx-ingress-controller"
+  annotations:
+    # This annotation will be updated by Terraform or manually
+    eks.amazonaws.com/role-arn: "arn:aws:iam::972709131469:role/max-weather-dev-aws-load-balancer-controller"
+
+# Disable SSL/TLS features for dev environment
+tcp: {}
+udp: {}
+
+# ConfigMap for nginx headers to handle API Gateway requests
+configMap:
+  data:
+    # API Gateway specific headers
+    X-Forwarded-Proto: "http"
+    X-Forwarded-For: "$proxy_add_x_forwarded_for"
+    X-Real-IP: "$remote_addr"
+
