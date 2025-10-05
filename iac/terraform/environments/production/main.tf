@@ -27,4 +27,7 @@ module "root" {
   desired_node_count        = 3
   api_gateway_stage_name    = var.api_gateway_stage_name
   cloudwatch_retention_days = var.cloudwatch_retention_days
+
+  # OpenWeather API Configuration
+  openweather_api_key = var.openweather_api_key
 }
