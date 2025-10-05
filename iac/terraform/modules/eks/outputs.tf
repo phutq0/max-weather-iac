@@ -18,9 +18,14 @@ output "cluster_oidc_provider_arn" {
   description = "OIDC provider ARN for IRSA"
 }
 
-output "node_group_name" {
-  value       = aws_eks_node_group.this.node_group_name
-  description = "Managed node group name"
+output "spot_node_group_name" {
+  value       = var.enable_spot_node_group ? aws_eks_node_group.spot[0].node_group_name : null
+  description = "Spot node group name"
+}
+
+output "ondemand_node_group_name" {
+  value       = var.enable_ondemand_node_group ? aws_eks_node_group.ondemand[0].node_group_name : null
+  description = "On-demand node group name"
 }
 
 output "ebs_csi_role_arn" {

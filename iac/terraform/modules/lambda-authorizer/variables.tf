@@ -27,7 +27,7 @@ variable "env" {
 }
 
 variable "api_gateway_execution_arn" {
-  description = "API Gateway execution ARN"
+  description = "API Gateway execution ARN for Lambda permission"
   type        = string
 }
 

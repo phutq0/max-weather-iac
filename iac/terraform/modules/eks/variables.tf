@@ -54,6 +54,69 @@ variable "enable_ebs_csi_driver" {
   default     = true
 }
 
+# Node Group Configuration
+variable "enable_spot_node_group" {
+  description = "Enable spot instance node group"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ondemand_node_group" {
+  description = "Enable on-demand instance node group"
+  type        = bool
+  default     = true
+}
+
+# Spot Node Group Settings
+variable "spot_node_instance_types" {
+  description = "Instance types for spot node group"
+  type        = list(string)
+  default     = ["t3.medium", "t3.large"]
+}
+
+variable "spot_node_min_size" {
+  description = "Minimum nodes in spot node group"
+  type        = number
+  default     = 0
+}
+
+variable "spot_node_max_size" {
+  description = "Maximum nodes in spot node group"
+  type        = number
+  default     = 5
+}
+
+variable "spot_node_desired_size" {
+  description = "Desired nodes in spot node group"
+  type        = number
+  default     = 1
+}
+
+# On-Demand Node Group Settings
+variable "ondemand_node_instance_types" {
+  description = "Instance types for on-demand node group"
+  type        = list(string)
+  default     = ["t3.medium"]
+}
+
+variable "ondemand_node_min_size" {
+  description = "Minimum nodes in on-demand node group"
+  type        = number
+  default     = 1
+}
+
+variable "ondemand_node_max_size" {
+  description = "Maximum nodes in on-demand node group"
+  type        = number
+  default     = 3
+}
+
+variable "ondemand_node_desired_size" {
+  description = "Desired nodes in on-demand node group"
+  type        = number
+  default     = 2
+}
+
 variable "tags" {
   description = "Common tags"
   type        = map(string)

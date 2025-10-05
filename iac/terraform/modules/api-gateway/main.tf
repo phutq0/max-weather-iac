@@ -246,5 +246,6 @@ resource "aws_api_gateway_integration_response" "proxy_options" {
     "method.response.header.Access-Control-Allow-Methods" = "'*'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
+  depends_on = [aws_api_gateway_method_response.proxy_options]
 }
 

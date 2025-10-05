@@ -155,19 +155,51 @@ data "tls_certificate" "oidc" {
   url = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
 
-resource "aws_eks_node_group" "this" {
+# Spot Node Group
+resource "aws_eks_node_group" "spot" {
+  count           = var.enable_spot_node_group ? 1 : 0
   cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${var.name}-default"
+  node_group_name = "${var.name}-spot"
   node_role_arn   = aws_iam_role.nodes.arn
   subnet_ids      = var.private_subnet_ids
 
   scaling_config {
-    desired_size = var.node_group_desired_size
-    min_size     = var.node_group_min_size
-    max_size     = var.node_group_max_size
+    desired_size = var.spot_node_desired_size
+    min_size     = var.spot_node_min_size
+    max_size     = var.spot_node_max_size
   }
 
-  instance_types = var.node_instance_types
+  instance_types = var.spot_node_instance_types
+
+  # Spot instance configuration
+  capacity_type = "SPOT"
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  tags       = local.tags
+  depends_on = [aws_iam_role_policy_attachment.nodes_worker, aws_iam_role_policy_attachment.nodes_cni, aws_iam_role_policy_attachment.nodes_ecr]
+}
+
+# On-Demand Node Group
+resource "aws_eks_node_group" "ondemand" {
+  count           = var.enable_ondemand_node_group ? 1 : 0
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = "${var.name}-ondemand"
+  node_role_arn   = aws_iam_role.nodes.arn
+  subnet_ids      = var.private_subnet_ids
+
+  scaling_config {
+    desired_size = var.ondemand_node_desired_size
+    min_size     = var.ondemand_node_min_size
+    max_size     = var.ondemand_node_max_size
+  }
+
+  instance_types = var.ondemand_node_instance_types
+
+  # On-demand instance configuration
+  capacity_type = "ON_DEMAND"
 
   update_config {
     max_unavailable = 1

@@ -34,12 +34,25 @@ module "eks" {
   cluster_version         = var.eks_cluster_version
   vpc_id                  = module.vpc.vpc_id
   private_subnet_ids      = module.vpc.private_subnet_ids
-  node_instance_types     = var.node_instance_types
-  node_group_min_size     = var.min_node_count
-  node_group_max_size     = var.max_node_count
-  node_group_desired_size = var.desired_node_count
   enable_ebs_csi_driver   = var.enable_ebs_csi_driver
-  tags                    = local.tags
+  
+  # Node Group Configuration
+  enable_spot_node_group   = var.enable_spot_node_group
+  enable_ondemand_node_group = var.enable_ondemand_node_group
+  
+  # Spot Node Group Settings
+  spot_node_instance_types = var.spot_node_instance_types
+  spot_node_min_size      = var.spot_node_min_size
+  spot_node_max_size      = var.spot_node_max_size
+  spot_node_desired_size  = var.spot_node_desired_size
+  
+  # On-Demand Node Group Settings
+  ondemand_node_instance_types = var.ondemand_node_instance_types
+  ondemand_node_min_size      = var.ondemand_node_min_size
+  ondemand_node_max_size      = var.ondemand_node_max_size
+  ondemand_node_desired_size  = var.ondemand_node_desired_size
+  
+  tags = local.tags
 }
 
 module "cloudwatch" {
@@ -81,6 +94,28 @@ module "api_gateway" {
   tags                  = local.tags
 }
 
+# ECR Repository for Dev Environment
+
+module "ecr" {
+  source = "./modules/ecr"
+  
+  repository_names = var.ecr_repository_names
+  
+  # Dev environment settings
+  image_tag_mutability = var.ecr_image_tag_mutability
+  scan_on_push        = var.ecr_scan_on_push
+  encryption_type     = var.ecr_encryption_type
+  
+  # Aggressive cleanup for dev environment
+  enable_lifecycle_policy = var.ecr_enable_lifecycle_policy
+  max_image_count        = var.ecr_max_image_count
+  max_image_age_days     = var.ecr_max_image_age_days
+  
+  tags = local.tags
+}
+
+
+
 
 output "eks_cluster_name" {
   value       = module.eks.cluster_name
@@ -96,4 +131,16 @@ output "api_gateway_urls" {
   value       = module.api_gateway.stage_invoke_urls
   description = "API Gateway stage invoke URLs"
 }
+
+# ECR Outputs
+output "ecr_repository_url" {
+  value       = module.ecr.repository_urls["max-weather-dev"]
+  description = "ECR repository URL for max-weather-dev"
+}
+
+output "ecr_repository_uri" {
+  value       = module.ecr.repository_uris["max-weather-dev"]
+  description = "Full ECR repository URI for Docker commands"
+}
+
 
