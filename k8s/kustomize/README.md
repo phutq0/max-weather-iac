@@ -5,7 +5,7 @@ This directory contains Kubernetes manifests for the Weather API application, or
 ## Directory Structure
 
 ```
-k8s/
+k8s/kustomize
 ├── base/                          # Base manifests (environment-agnostic)
 │   ├── kustomization.yaml
 │   ├── configmap.yaml
