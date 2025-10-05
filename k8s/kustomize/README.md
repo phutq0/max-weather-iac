@@ -31,9 +31,6 @@ k8s/kustomize
 │       ├── deployment-patch.yaml
 │       ├── configmap-patch.yaml
 │       └── secret-patch.yaml
-├── charts/                        # Helm charts
-│   └── ingress-nginx/
-│       └── values-dev.yaml
 ├── deploy-dev.sh                  # Dev deployment script
 ├── deploy-staging.sh              # Staging deployment script
 ├── deploy-production.sh           # Production deployment script
