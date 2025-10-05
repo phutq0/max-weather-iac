@@ -220,3 +220,36 @@ variable "openweather_api_key" {
   type        = string
   sensitive   = true
 }
+
+# EKS access entries defined at root and passed to module.eks
+variable "eks_access_entries" {
+  description = "List of EKS access entries (IAM principals and access policies)"
+  type = list(object({
+    principal_arn      = string
+    policy_arn         = string
+    access_scope_type  = string
+    namespaces         = optional(list(string), [])
+  }))
+  default = []
+}
+
+# Optional legacy aws-auth mappings (coexist with EKS access entries)
+variable "aws_auth_map_users" {
+  description = "List of user mappings for aws-auth ConfigMap"
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "aws_auth_map_roles" {
+  description = "List of role mappings for aws-auth ConfigMap"
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}

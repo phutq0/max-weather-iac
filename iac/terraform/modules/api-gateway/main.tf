@@ -38,7 +38,7 @@ resource "aws_api_gateway_method" "proxy_any" {
   authorizer_id    = aws_api_gateway_authorizer.lambda.id
   api_key_required = true
   request_parameters = {
-    "method.request.path.proxy" = true
+    "method.request.path.proxy"          = true
   }
 }
 
@@ -47,11 +47,12 @@ resource "aws_api_gateway_integration" "proxy" {
   resource_id             = aws_api_gateway_resource.proxy.id
   http_method             = aws_api_gateway_method.proxy_any.http_method
   type                    = "HTTP_PROXY"
-  uri                     = "${var.endpoint_protocol}://${var.endpoint_domain}:${var.endpoint_port}/{proxy}?appid=${var.openweather_api_key}"
+  uri                     = "${var.endpoint_protocol}://${var.endpoint_uri}/{proxy}"
   integration_http_method = "ANY"
   passthrough_behavior    = "WHEN_NO_MATCH"
   request_parameters = {
     "integration.request.path.proxy" = "method.request.path.proxy"
+    "integration.request.querystring.appid" = "context.authorizer.appid"
   }
 }
 
@@ -69,9 +70,12 @@ resource "aws_api_gateway_integration" "root_proxy" {
   resource_id             = aws_api_gateway_rest_api.this.root_resource_id
   http_method             = aws_api_gateway_method.root_any.http_method
   type                    = "HTTP_PROXY"
-  uri                     = "${var.endpoint_protocol}://${var.endpoint_domain}:${var.endpoint_port}?appid=${var.openweather_api_key}"
+  uri                     = "${var.endpoint_protocol}://${var.endpoint_uri}"
   integration_http_method = "ANY"
   passthrough_behavior    = "WHEN_NO_MATCH"
+  request_parameters = {
+    "integration.request.querystring.appid" = "stageVariables.appid"
+  }
 }
 
 resource "aws_api_gateway_model" "request" {
@@ -152,6 +156,9 @@ resource "aws_api_gateway_stage" "this" {
   deployment_id        = aws_api_gateway_deployment.this.id
   stage_name           = each.key
   xray_tracing_enabled = true
+  variables = {
+    appid = var.openweather_api_key
+  }
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.apigw.arn
     format = jsonencode({

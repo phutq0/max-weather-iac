@@ -143,6 +143,17 @@ resource "aws_eks_cluster" "this" {
 
   tags = local.tags
 }
+# Kubernetes provider configured to talk to the new EKS cluster
+provider "kubernetes" {
+  host                   = aws_eks_cluster.this.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.this.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.this.token
+}
+
+data "aws_eks_cluster_auth" "this" {
+  name = aws_eks_cluster.this.name
+}
+
 
 resource "aws_iam_openid_connect_provider" "this" {
   client_id_list  = ["sts.amazonaws.com"]
@@ -217,6 +228,52 @@ resource "aws_eks_addon" "coredns" {
 resource "aws_eks_addon" "kube_proxy" {
   cluster_name = aws_eks_cluster.this.name
   addon_name   = "kube-proxy"
+}
+# -----------------------------------------------------------------------------
+# aws-auth ConfigMap (optional) — coexists with access entries
+# -----------------------------------------------------------------------------
+locals {
+  aws_auth_map_users_yaml = length(var.aws_auth_map_users) > 0 ? yamlencode(var.aws_auth_map_users) : null
+  aws_auth_map_roles_yaml = length(var.aws_auth_map_roles) > 0 ? yamlencode(var.aws_auth_map_roles) : null
+}
+
+resource "kubernetes_config_map_v1" "aws_auth" {
+  count = length(var.aws_auth_map_users) > 0 || length(var.aws_auth_map_roles) > 0 ? 1 : 0
+
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = merge(
+    var.aws_auth_map_users != [] ? { mapUsers = yamlencode(var.aws_auth_map_users) } : {},
+    var.aws_auth_map_roles != [] ? { mapRoles = yamlencode(var.aws_auth_map_roles) } : {}
+  )
+}
+
+
+# -----------------------------------------------------------------------------
+# EKS Access Entries (optional)
+# -----------------------------------------------------------------------------
+resource "aws_eks_access_entry" "this" {
+  for_each     = { for e in var.access_entries : e.principal_arn => e }
+  cluster_name = aws_eks_cluster.this.name
+  principal_arn = each.value.principal_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "this" {
+  for_each     = { for e in var.access_entries : e.principal_arn => e }
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = each.value.principal_arn
+  policy_arn    = each.value.policy_arn
+
+  access_scope {
+    type       = each.value.access_scope_type
+    namespaces = try(each.value.namespaces, null)
+  }
+
+  depends_on = [aws_eks_access_entry.this]
 }
 
 resource "aws_iam_role" "ebs_csi" {

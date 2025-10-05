@@ -8,15 +8,9 @@ variable "region" {
   type        = string
 }
 
-variable "endpoint_domain" {
-  description = "Backend LB domain (e.g., abc.execute-api...)"
+variable "endpoint_uri" {
+  description = "Backend URI"
   type        = string
-}
-
-variable "endpoint_port" {
-  description = "Backend port"
-  type        = number
-  default     = 443
 }
 
 variable "endpoint_protocol" {

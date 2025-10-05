@@ -44,3 +44,11 @@ app_dynamodb_table_arns = []
 
 # OpenWeather API Configuration
 openweather_api_key = "TBU"
+
+# EKS Access Configuration
+# Native EKS access entries (recommended)
+eks_access_entries = []
+
+# Optional legacy aws-auth mappings
+aws_auth_map_users = []
+aws_auth_map_roles = []

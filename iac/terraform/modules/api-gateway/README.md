@@ -2,8 +2,9 @@ API Gateway (REST) module
 
 Creates a REST API with:
 - Proxy integration to OpenWeather API endpoint
-- Automatic API key injection for OpenWeather API authentication
-- Stages (staging, production)
+- Stage variables for secure API key management
+- Automatic API key injection via stage variables for OpenWeather API authentication
+- Stages (staging, production) with configurable variables
 - Usage plan with API key and throttling (1000 rps)
 - Lambda token authorizer for OAuth2 validation
 - CORS and basic request/response models
@@ -30,5 +31,9 @@ module "api_gw" {
 ```
 
 **Important Security Note:**
-The `openweather_api_key` variable is marked as sensitive to prevent it from being displayed in logs or state files. Make sure to set this variable in your terraform.tfvars files with your actual OpenWeather API key.
+The `openweather_api_key` variable is marked as sensitive to prevent it from being displayed in logs or state files. The API key is stored as a stage variable (`appid`) and automatically injected into OpenWeather API requests. Make sure to set this variable in your terraform.tfvars files with your actual OpenWeather API key.
+
+**Stage Variables:**
+- `appid`: Contains the OpenWeather API key for authentication
+- Automatically injected into all API Gateway integration URIs as `?appid={stageVariables.appid}`
 

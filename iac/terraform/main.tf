@@ -66,6 +66,13 @@ module "eks" {
   ondemand_node_max_size      = var.ondemand_node_max_size
   ondemand_node_desired_size  = var.ondemand_node_desired_size
   
+  # EKS access entries
+  access_entries = var.eks_access_entries
+
+  # Optional legacy aws-auth mappings
+  aws_auth_map_users = var.aws_auth_map_users
+  aws_auth_map_roles = var.aws_auth_map_roles
+
   tags = local.tags
 }
 
@@ -92,6 +99,7 @@ module "lambda_authorizer" {
     OAUTH_CLIENT_ID         = "REPLACE"
     OAUTH_CLIENT_SECRET     = "REPLACE"
     VERSION                 = "2.0.0"
+    OPENWEATHER_API_KEY     = var.openweather_api_key
   }
   tags = local.tags
 }
@@ -100,8 +108,7 @@ module "api_gateway" {
   source                = "./modules/api-gateway"
   name                  = "${local.name}-api"
   region                = var.region
-  endpoint_domain       = "api.openweathermap.org"
-  endpoint_port         = 443
+  endpoint_uri          = "api.openweathermap.org/data/2.5" # Call directly to OpenWeather API for testing
   endpoint_protocol     = "https"
   lambda_authorizer_arn = module.lambda_authorizer.lambda_arn
   stage_names           = [var.api_gateway_stage_name]

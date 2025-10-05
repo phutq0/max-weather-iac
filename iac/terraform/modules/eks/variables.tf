@@ -123,3 +123,37 @@ variable "tags" {
   default     = {}
 }
 
+# EKS Access Entries (AWS native access management)
+# Provide a list of IAM principals and desired access policy/scope
+variable "access_entries" {
+  description = "List of EKS access entries to grant cluster access"
+  type = list(object({
+    principal_arn      = string                    # IAM user/role ARN
+    policy_arn         = string                    # e.g. arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
+    access_scope_type  = string                    # \"cluster\" or \"namespace\"
+    namespaces         = optional(list(string), [])
+  }))
+  default = []
+}
+
+# Legacy aws-auth mappings (optional) — to coexist with EKS Access Entries
+variable "aws_auth_map_users" {
+  description = "List of user mappings for aws-auth ConfigMap"
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "aws_auth_map_roles" {
+  description = "List of role mappings for aws-auth ConfigMap"
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
